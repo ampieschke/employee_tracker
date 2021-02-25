@@ -18,18 +18,18 @@ const start = () => {
     })
     .then((answer) => {
       console.log(answer);
-      if (answer === "View") {
+      if (answer.todo === "View") {
         runShowtable();
-      } else if (answer === "Add") {
+      } else if (answer.todo === "Add") {
         runAdd();
-      } else if (answer === "Update") {
+      } else if (answer.todo === "Update") {
         runUpdate();
       }
     });
 };
 
 const runShowtable = () => {
-  inquirer.prompt({});
+  console.log("Table Coming Soon!");
 };
 
 const runAdd = () => {
@@ -38,17 +38,62 @@ const runAdd = () => {
       type: "list",
       name: "addwhat",
       message: "What would you like to add?",
-      choices: ["Employee", "Department", "Roll"],
+      choices: ["Employee", "Department", "Role"],
     })
     .then((answer) => {
       console.log(answer);
-      if (answer === "View") {
-        runShowtable();
-      } else if (answer === "Add") {
-        runAdd();
-      } else if (answer === "Update") {
-        runUpdate();
+      if (answer.addwhat === "Employee") {
+        addEmp();
+      } else if (answer.addwhat === "Department") {
+        addDept();
+      } else if (answer.addwhat === "Role") {
+        addRole();
       }
+    });
+};
+
+const addEmp = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstname",
+        message: "What is their FIRST NAME?",
+      },
+      {
+        type: "input",
+        name: "lastname",
+        message: "What is their LAST NAME?",
+      },
+      {
+        type: "list",
+        name: "role",
+        message: "What is their ROLE ID?",
+        choices: [1, 2],
+      },
+      {
+        type: "list",
+        name: "manager",
+        message: "Who is their MANAGER?",
+        choices: ["A", "B"],
+      },
+    ])
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.firstname,
+          last_name: answer.lastname,
+          role_id: answer.role,
+          manager_id: answer.manager,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("Employee Added Successfully!");
+
+          asktocontinue();
+        }
+      );
     });
 };
 
