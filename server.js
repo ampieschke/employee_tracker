@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "",
+  password: "Bluesbro1!",
   database: "employeetracker",
 });
 
@@ -75,7 +75,7 @@ const addEmp = () => {
         type: "list",
         name: "manager",
         message: "Who is their MANAGER?",
-        choices: ["A", "B"],
+        choices: [1, 2],
       },
     ])
     .then((answer) => {
@@ -84,8 +84,8 @@ const addEmp = () => {
         {
           first_name: answer.firstname,
           last_name: answer.lastname,
-          role_id: answer.role,
-          manager_id: answer.manager,
+          role_id: answer.role || 1,
+          manager_id: answer.manager || 0,
         },
         (err) => {
           if (err) throw err;
@@ -101,11 +101,27 @@ const runUpdate = () => {
   inquirer.prompt({});
 };
 
-// connect to the mysql server and sql database
-// connection.connect((err) => {
-//   if (err) throw err;
-//   // run the start function after the connection is made to prompt the user
-//   start();
-// });
+const asktocontinue = () => {
+  inquirer
+    .prompt([
+      {
+        type: "confirm",
+        message: "Do you want to do more?",
+        name: "continue",
+      },
+    ])
+    .then((res) => {
+      if (res.continue) {
+        start();
+      } else {
+        console.log("Done");
+      }
+    })
+    .catch((err) => console.error(err));
+};
 
-start();
+connection.connect((err) => {
+  if (err) throw err;
+  // run the start function after the connection is made to prompt the user
+  start();
+});
