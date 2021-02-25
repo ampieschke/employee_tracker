@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "Bluesbro1!",
+  password: "",
   database: "employeetracker",
 });
 
@@ -115,6 +115,7 @@ const asktocontinue = () => {
         start();
       } else {
         console.log("Done");
+        connection.end();
       }
     })
     .catch((err) => console.error(err));
