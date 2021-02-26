@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "",
+  password: "Bluesbro1!",
   database: "employeetracker",
 });
 
@@ -90,6 +90,66 @@ const addEmp = () => {
         (err) => {
           if (err) throw err;
           console.log("Employee Added Successfully!");
+
+          asktocontinue();
+        }
+      );
+    });
+};
+
+const addDept = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "deptname",
+        message: "What is the NAME?",
+      },
+    ])
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          deptname: answer.deptname,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("Department Added Successfully!");
+
+          asktocontinue();
+        }
+      );
+    });
+};
+
+const addRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "rolename",
+        message: "What is the ROLE NAME?",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the ROLE SALARY?",
+      },
+      {
+        type: "input",
+        name: "deptid",
+        message: "What is the DEPARTMENT ID?",
+      },
+    ])
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO roles SET ?",
+        {
+          rolename: answer.rolename,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("Role Added Successfully!");
 
           asktocontinue();
         }

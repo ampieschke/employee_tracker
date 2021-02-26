@@ -4,21 +4,21 @@ CREATE DATABASE employeetracker;
 USE employeetracker;
 
 CREATE TABLE department(
-id INT PRIMARY KEY NOT NULL,
-deptname VARCHAR(30) NULL
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+deptname VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE roles(
-id INT PRIMARY KEY NOT NULL,
-title VARCHAR(30) NULL,
-salary DECIMAL NULL,
-department_id INT NULL
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+title VARCHAR(30) NOT NULL,
+salary DECIMAL NOT NULL,
+department_id INT NOT NULL
 );
 
 CREATE TABLE employee(
 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-first_name VARCHAR(30) NULL,
-last_name VARCHAR(30) NULL,
+first_name VARCHAR(30) NOT NULL,
+last_name VARCHAR(30) NOT NULL,
 role_id INT NULL,
 manager_id INT NULL
 );
