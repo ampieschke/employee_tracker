@@ -28,11 +28,48 @@ const start = () => {
       }
     });
 };
-//////////////////////////// SHOW TABLE  ///////////////////////////
+//////////////////////////// SHOW STUFF  ///////////////////////////
 const runShowtable = () => {
-  console.log("Table Coming Soon!");
+  inquirer
+    .prompt({
+      type: "list",
+      name: "seewhat",
+      message: "What would you like to view?",
+      choices: ["All Employees", "All Departments", "All Roles"],
+    })
+    .then((answer) => {
+      console.log(answer);
+      if (answer.seewhat === "All Employees") {
+        seeEmps();
+      } else if (answer.seewhat === "All Departments") {
+        seeDepts();
+      } else if (answer.seewhat === "All Roles") {
+        seeRoles();
+      }
+    });
+
+  const seeEmps = () => {
+    const query = "SELECT * FROM employee";
+    connection.query(query, (err, res) => {
+      if (err) throw err;
+      const table = cTable.getTable(res);
+      console.log(table);
+      asktocontinue();
+    });
+  };
 };
 
+const seeDepts = () => {
+  console.log("Coming Soon!");
+  asktocontinue();
+};
+
+const seeRoles = () => {
+  console.log("Coming Soon!");
+  asktocontinue();
+};
+
+//////////////////////////// ADD STUFF  ///////////////////////////
 const runAdd = () => {
   inquirer
     .prompt({
