@@ -117,18 +117,20 @@ const addDept = () => {
         (err) => {
           if (err) throw err;
           console.log("Department Added Successfully!");
-
           asktocontinue();
         }
       );
     });
 };
+
 ////////////////////////////  ADD ROLE  ///////////////////////////
 const addRole = () => {
   const query = "SELECT id FROM department";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    console.log(res);
+    let ids = [];
+    res.forEach(({ id }) => ids.push(id));
+    console.log(ids);
 
     inquirer
       .prompt([
@@ -146,14 +148,14 @@ const addRole = () => {
           type: "list",
           name: "deptid",
           message: "What is the DEPARTMENT ID?",
-          choices: [res],
+          choices: ids,
         },
       ])
       .then((answer) => {
         connection.query(
           "INSERT INTO roles SET ?",
           {
-            rolename: answer.rolename,
+            title: answer.rolename,
             salary: answer.salary,
             department_id: answer.deptid,
           },
