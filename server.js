@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "Bluesbro1!",
+  password: "",
   database: "employeetracker",
 });
 
@@ -27,7 +27,7 @@ const start = () => {
       }
     });
 };
-
+//////////////////////////// SHOW TABLE  ///////////////////////////
 const runShowtable = () => {
   console.log("Table Coming Soon!");
 };
@@ -52,6 +52,7 @@ const runAdd = () => {
     });
 };
 
+////////////////////////////  ADD EMPLOYEE  ///////////////////////////
 const addEmp = () => {
   inquirer
     .prompt([
@@ -97,6 +98,7 @@ const addEmp = () => {
     });
 };
 
+////////////////////////////  ADD DEPARTMENT  ///////////////////////////
 const addDept = () => {
   inquirer
     .prompt([
@@ -121,40 +123,49 @@ const addDept = () => {
       );
     });
 };
-
+////////////////////////////  ADD ROLE  ///////////////////////////
 const addRole = () => {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "rolename",
-        message: "What is the ROLE NAME?",
-      },
-      {
-        type: "input",
-        name: "salary",
-        message: "What is the ROLE SALARY?",
-      },
-      {
-        type: "input",
-        name: "deptid",
-        message: "What is the DEPARTMENT ID?",
-      },
-    ])
-    .then((answer) => {
-      connection.query(
-        "INSERT INTO roles SET ?",
-        {
-          rolename: answer.rolename,
-        },
-        (err) => {
-          if (err) throw err;
-          console.log("Role Added Successfully!");
+  const query = "SELECT id FROM department";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    console.log(res);
 
-          asktocontinue();
-        }
-      );
-    });
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "rolename",
+          message: "What is the ROLE NAME?",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is the ROLE SALARY?",
+        },
+        {
+          type: "list",
+          name: "deptid",
+          message: "What is the DEPARTMENT ID?",
+          choices: [res],
+        },
+      ])
+      .then((answer) => {
+        connection.query(
+          "INSERT INTO roles SET ?",
+          {
+            rolename: answer.rolename,
+            salary: answer.salary,
+            department_id: answer.deptid,
+          },
+          (err) => {
+            if (err) throw err;
+            console.log("Role Added Successfully!");
+
+            asktocontinue();
+          }
+        );
+      });
+  });
 };
 
 const runUpdate = () => {
