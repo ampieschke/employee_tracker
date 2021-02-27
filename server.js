@@ -1,6 +1,8 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+const { concat } = require("rxjs");
+const { resourceLimits } = require("worker_threads");
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -251,19 +253,26 @@ const runUpdate = () => {
 ////////////////////////////  UPDATE EMPLOYEE ROLE  ///////////////////////////
 
 const upEmp = () => {
-  const query = "SELECT id FROM employee";
+  const query = "SELECT * FROM employee";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    let empids = [];
-    res.forEach(({ id }) => empids.push(id));
-    console.log(empids);
+    // let empids = [];
+    const empChoices = [];
+    res.forEach(({ id, first_name, last_name }) => {
+      let emp = {
+        name: first_name + " " + last_name,
+        value: id,
+      };
+      empChoices.push(emp);
+    });
+    // res.forEach(({ id, first_name, last_name }) => empids.push(id));
     inquirer
       .prompt([
         {
           type: "list",
           name: "updateWho",
           message: "Whos role would you like to update?",
-          choices: empids,
+          choices: empChoices,
         },
         {
           type: "list",
@@ -274,8 +283,6 @@ const upEmp = () => {
       ])
       .then((answer) => {
         console.log(answer);
-        console.log(answer.updateWho);
-        console.log(answer.roleup);
         connection.query(
           "UPDATE employee SET ? WHERE ?",
           [
@@ -297,7 +304,6 @@ const upEmp = () => {
 };
 
 ////////////////////////////  UPDATE EMPLOYEE ROLE  ///////////////////////////
-
 const asktocontinue = () => {
   inquirer
     .prompt([
