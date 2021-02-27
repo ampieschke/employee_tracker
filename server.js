@@ -60,13 +60,23 @@ const runShowtable = () => {
 };
 
 const seeDepts = () => {
-  console.log("Coming Soon!");
-  asktocontinue();
+  const query = "SELECT * FROM department";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    const table = cTable.getTable(res);
+    console.log(table);
+    asktocontinue();
+  });
 };
 
 const seeRoles = () => {
-  console.log("Coming Soon!");
-  asktocontinue();
+  const query = "SELECT * FROM roles";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    const table = cTable.getTable(res);
+    console.log(table);
+    asktocontinue();
+  });
 };
 
 //////////////////////////// ADD STUFF  ///////////////////////////
@@ -92,48 +102,56 @@ const runAdd = () => {
 
 ////////////////////////////  ADD EMPLOYEE  ///////////////////////////
 const addEmp = () => {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "firstname",
-        message: "What is their FIRST NAME?",
-      },
-      {
-        type: "input",
-        name: "lastname",
-        message: "What is their LAST NAME?",
-      },
-      {
-        type: "list",
-        name: "role",
-        message: "What is their ROLE ID?",
-        choices: [1, 2],
-      },
-      {
-        type: "list",
-        name: "manager",
-        message: "Who is their MANAGER?",
-        choices: [1, 2],
-      },
-    ])
-    .then((answer) => {
-      connection.query(
-        "INSERT INTO employee SET ?",
-        {
-          first_name: answer.firstname,
-          last_name: answer.lastname,
-          role_id: answer.role || 1,
-          manager_id: answer.manager || 0,
-        },
-        (err) => {
-          if (err) throw err;
-          console.log("Employee Added Successfully!");
+  const query = "SELECT id FROM roles";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    let rol = [];
+    res.forEach(({ id }) => rol.push(id));
+    console.log(rol);
 
-          asktocontinue();
-        }
-      );
-    });
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "firstname",
+          message: "What is their FIRST NAME?",
+        },
+        {
+          type: "input",
+          name: "lastname",
+          message: "What is their LAST NAME?",
+        },
+        {
+          type: "list",
+          name: "role",
+          message: "What is their ROLE ID?",
+          choices: rol,
+        },
+        {
+          type: "list",
+          name: "manager",
+          message: "Who is their MANAGER?",
+          choices: [0, 1, 2],
+        },
+      ])
+      .then((answer) => {
+        connection.query(
+          "INSERT INTO employee SET ?",
+          {
+            first_name: answer.firstname,
+            last_name: answer.lastname,
+            role_id: answer.role || 1,
+            manager_id: answer.manager || 0,
+          },
+          (err) => {
+            if (err) throw err;
+            console.log("Employee Added Successfully!");
+
+            asktocontinue();
+          }
+        );
+      });
+  });
 };
 
 ////////////////////////////  ADD DEPARTMENT  ///////////////////////////
@@ -208,9 +226,77 @@ const addRole = () => {
   });
 };
 
+////////////////////////////  UPDATE STUFF  ///////////////////////////
+
 const runUpdate = () => {
-  inquirer.prompt({});
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "update",
+        message: "What would you like to update?",
+        choices: ["Employee Role", "Employee Manager"],
+      },
+    ])
+    .then((answer) => {
+      console.log(answer);
+      if (answer.update === "Employee Role") {
+        upEmp();
+      } else if (answer.update === "Employee Manager") {
+        upDept();
+      }
+    });
 };
+
+////////////////////////////  UPDATE EMPLOYEE ROLE  ///////////////////////////
+
+const upEmp = () => {
+  const query = "SELECT id FROM employee";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    let empids = [];
+    res.forEach(({ id }) => empids.push(id));
+    console.log(empids);
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "updateWho",
+          message: "Whos role would you like to update?",
+          choices: empids,
+        },
+        {
+          type: "list",
+          name: "roleup",
+          message: "What would you like to update their role to?",
+          choices: [1, 2, 3],
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        console.log(answer.updateWho);
+        console.log(answer.roleup);
+        connection.query(
+          "UPDATE employee SET ? WHERE ?",
+          [
+            {
+              role_id: answer.roleup,
+            },
+            {
+              id: answer.updateWho,
+            },
+          ],
+          (err) => {
+            if (err) throw err;
+            console.log("Role Updated Successfully!");
+            asktocontinue();
+          }
+        );
+      });
+  });
+};
+
+////////////////////////////  UPDATE EMPLOYEE ROLE  ///////////////////////////
 
 const asktocontinue = () => {
   inquirer
