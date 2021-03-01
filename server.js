@@ -30,7 +30,9 @@ const start = () => {
       }
     });
 };
+
 //////////////////////////// SHOW STUFF  ///////////////////////////
+
 const runShowtable = () => {
   inquirer
     .prompt({
@@ -51,7 +53,9 @@ const runShowtable = () => {
     });
 
   const seeEmps = () => {
-    const query = "SELECT * FROM employee";
+    const query =
+      "SELECT * FROM employee left join roles on employee.role_id = roles.id";
+    // query += "FROM roles INNER JOIN ON employee.role_id=roles.id";
     connection.query(query, (err, res) => {
       if (err) throw err;
       const table = cTable.getTable(res);
@@ -82,6 +86,7 @@ const seeRoles = () => {
 };
 
 //////////////////////////// ADD STUFF  ///////////////////////////
+
 const runAdd = () => {
   inquirer
     .prompt({
@@ -103,13 +108,20 @@ const runAdd = () => {
 };
 
 ////////////////////////////  ADD EMPLOYEE  ///////////////////////////
+
 const addEmp = () => {
-  const query = "SELECT id FROM roles";
+  const query = "SELECT * FROM roles";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    let rol = [];
-    res.forEach(({ id }) => rol.push(id));
-    console.log(rol);
+    const rolChoices = [];
+    res.forEach(({ id, title }) => {
+      let rol = {
+        name: title,
+        value: id,
+      };
+      rolChoices.push(rol);
+      console.log(rolChoices);
+    });
 
     inquirer
       .prompt([
@@ -126,8 +138,8 @@ const addEmp = () => {
         {
           type: "list",
           name: "role",
-          message: "What is their ROLE ID?",
-          choices: rol,
+          message: "What is their ROLE?",
+          choices: rolChoices,
         },
         {
           type: "list",
@@ -183,12 +195,18 @@ const addDept = () => {
 
 ////////////////////////////  ADD ROLE  ///////////////////////////
 const addRole = () => {
-  const query = "SELECT id FROM department";
+  const query = "SELECT * FROM department";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    let ids = [];
-    res.forEach(({ id }) => ids.push(id));
-    console.log(ids);
+    const depChoices = [];
+    res.forEach(({ id, deptname }) => {
+      let dep = {
+        name: deptname,
+        value: id,
+      };
+      depChoices.push(dep);
+      console.log(depChoices);
+    });
 
     inquirer
       .prompt([
@@ -206,7 +224,7 @@ const addRole = () => {
           type: "list",
           name: "deptid",
           message: "What is the DEPARTMENT ID?",
-          choices: ids,
+          choices: depChoices,
         },
       ])
       .then((answer) => {
@@ -265,7 +283,7 @@ const upEmp = () => {
       };
       empChoices.push(emp);
     });
-    // res.forEach(({ id, first_name, last_name }) => empids.push(id));
+
     inquirer
       .prompt([
         {
@@ -326,6 +344,6 @@ const asktocontinue = () => {
 
 connection.connect((err) => {
   if (err) throw err;
-  // run the start function after the connection is made to prompt the user
+  console.log("Welcome to the Employee Database!");
   start();
 });
