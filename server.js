@@ -76,7 +76,7 @@ const seeDepts = () => {
 };
 
 const seeRoles = () => {
-  const query = "SELECT * FROM roles";
+  const query = "SELECT title, salary FROM roles";
   connection.query(query, (err, res) => {
     if (err) throw err;
     const table = cTable.getTable(res);
@@ -263,7 +263,7 @@ const runUpdate = () => {
       if (answer.update === "Employee Role") {
         upEmp();
       } else if (answer.update === "Employee Manager") {
-        upDept();
+        upMan();
       }
     });
 };
@@ -274,7 +274,7 @@ const upEmp = () => {
   const query = "SELECT * FROM employee";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    // let empids = [];
+    // let roleChoices = [];
     const empChoices = [];
     res.forEach(({ id, first_name, last_name }) => {
       let emp = {
@@ -283,6 +283,12 @@ const upEmp = () => {
       };
       empChoices.push(emp);
     });
+    // res.forEach(({ id, title }) => {
+    //   let rol = {
+    //     name: title,
+    //     value: id,
+    //   };
+    // });
 
     inquirer
       .prompt([
@@ -296,7 +302,7 @@ const upEmp = () => {
           type: "list",
           name: "roleup",
           message: "What would you like to update their role to?",
-          choices: [1, 2, 3],
+          choices: [1, 2, 3], //roleChoices
         },
       ])
       .then((answer) => {
@@ -321,7 +327,64 @@ const upEmp = () => {
   });
 };
 
-////////////////////////////  UPDATE EMPLOYEE ROLE  ///////////////////////////
+////////////////////////////  UPDATE EMPLOYEE Manger  ///////////////////////////
+
+const upMan = () => {
+  const query = "SELECT * FROM employee";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    // let roleChoices = [];
+    const empChoices = [];
+    res.forEach(({ id, first_name, last_name }) => {
+      let emp = {
+        name: first_name + " " + last_name,
+        value: id,
+      };
+      empChoices.push(emp);
+    });
+    // res.forEach(({ id, title }) => {
+    //   let rol = {
+    //     name: title,
+    //     value: id,
+    //   };
+    // });
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "updateWho",
+          message: "Whos Manager would you like to update?",
+          choices: empChoices,
+        },
+        {
+          type: "list",
+          name: "manup",
+          message: "Who would you like to update manager role to?",
+          choices: [1, 2, 3], //roleChoices
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        connection.query(
+          "UPDATE employee SET ? WHERE ?",
+          [
+            {
+              role_id: answer.manup,
+            },
+            {
+              id: answer.updateWho,
+            },
+          ],
+          (err) => {
+            if (err) throw err;
+            console.log("Role Updated Successfully!");
+            asktocontinue();
+          }
+        );
+      });
+  });
+};
 const asktocontinue = () => {
   inquirer
     .prompt([
