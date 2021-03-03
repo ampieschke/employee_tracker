@@ -1,8 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-const { concat } = require("rxjs");
-const { resourceLimits } = require("worker_threads");
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
