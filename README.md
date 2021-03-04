@@ -11,6 +11,8 @@
   * [Questions](#questions)
 
   ### Usage
+  ![readmewalkthrough](assets/emplyeetrakerExample.gif)
+
   Program is iniiated with "node server.js"
 
   ### Questions
